@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('./../controllers/users');
+const controller = require('./../controllers/products');
 
 const multer = require('multer');
 
@@ -10,6 +10,7 @@ const multerStorage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const nombre = req.params.id;
+        console.log(nombre);
         const extention = file.originalname.split('.').pop();
         cb(null, `${nombre}.${extention}`);
     }
@@ -28,19 +29,19 @@ router.post('/upload/:id', upload.single('file'), (req, res) => {
 
 /**
  * @swagger
- * /users:
+ * /products:
  *  post:
- *    desription: create user
+ *    desription: add a new product
  *    parameters:
  *      - in: body
  *        name: create
- *        description: JSON => email, password, name and type
+ *        description: JSON => Name, Description, Price, RestaurantId
  *        required: true
  *        schema: 
  *          type: string
  *    responses:
  *      201:
- *        description: post create user
+ *        description: post create product
  *      400:
  *        description: bad request
  */
@@ -48,25 +49,25 @@ router.post('/', express.json(), controller.create);
 
 /**
  * @swagger
- * /users/{id}:
+ * /products/{id}:
  *  put:
- *    desription: update user
+ *    desription: update a product
  *    parameters:
  *      - in: path
  *        name: id
- *        description: user id 
+ *        description: product id 
  *        required: true
  *        schema:
  *          type: string
  *      - in: body
  *        name: update
- *        description: JSON => password, name, history, status and image
+ *        description: JSON => update any value
  *        required: true
  *        schema: 
  *          type: string
  *    responses:
  *      200:
- *        description: put update user
+ *        description: put update a product
  *      400:
  *        description: bad request
  */
@@ -74,12 +75,12 @@ router.put('/:id', express.json(), controller.update);
 
 /**
  * @swagger
- * /users:
+ * /products:
  *  get:
- *    desription: list users
+ *    desription: list of all products
  *    responses:
  *      200:
- *        description: get users
+ *        description: get products
  *      400:
  *        description: bad request
  */
@@ -87,19 +88,19 @@ router.get('/', controller.list);
 
 /**
  * @swagger
- * /users/{id}:
+ * /products/{id}:
  *  get:
- *    description: search user
+ *    description: search for a product
  *    parameters:
  *      - in: path
  *        name: id
- *        description: user id 
+ *        description: product id 
  *        required: true
  *        schema:
  *          type: string
  *    responses:
  *      200:
- *        description: get user
+ *        description: get an specific product
  *      400:
  *        description: bad request
  */
@@ -107,30 +108,42 @@ router.get('/:id', controller.search);
 
 /**
  * @swagger
- * /users/{id}:
- *  delete:
- *    desription: delete user
+ * /products/filter/{filter}:
+ *  get:
+ *    description: filter products
  *    parameters:
  *      - in: path
- *        name: id
- *        description: user id
+ *        name: filter
+ *        description: product filter
  *        required: true
  *        schema:
  *          type: string
  *    responses:
  *      200:
- *        description: delete user
+ *        description: get products
+ *      400:
+ *        description: bad request
+ */
+router.get('/filter/:filter', controller.search_in);
+
+/**
+ * @swagger
+ * /products/{id}:
+ *  delete:
+ *    desription: delete a product
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        description: product id
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: delete the product
  *      400:
  *        description: bad request
  */
 router.delete('/:id', controller.delete);
-
-router.get('/look/:email', controller.searchCreate);
-
-router.post('/login', express.json(), controller.searchLogin);
-
-router.get('/load/:token', controller.loadUser);
-
-router.post('/login/google', express.json(), controller.googleLogin);
 
 module.exports = router;
