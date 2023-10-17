@@ -2,41 +2,17 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./../controllers/users');
 const path = require('path');
-const multerS3 = require('multer-s3');
-const { S3Client } = require("@aws-sdk/client-s3");
 
 const multer = require('multer');
 
-// const multerStorage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, path.join(__dirname, '..', '..', 'uploads'));
-//     },
-//     filename: (req, file, cb) => {
-//         const nombre = req.params.id;
-//         const extention = file.originalname.split('.').pop();
-//         cb(null, `${nombre}.${extention}`);
-//     }
-// });
-
-const s3 = new S3Client({                   // como crear cuenta
-    region: "us-east-1",
-    credentials: {
-        accessKeyId: "ASIARAKHDECVG2RY5ZHR",
-        secretAccessKey: "0tPi5gIj6Oyup7OdQPdCHYdBBh75T+ucA/ieS5oL"
-    }
-});
-
-const s3Storage = multerS3({                // esto dónde se usa tenemos sospecha que es con el handle file en el post
-    s3: s3,
-    bucket: "filaremotabucket",
-    metadata: (req, file, cb) => {
-        cb(null, { ...file });
+const multerStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '..', '..', 'uploads'));
     },
-    acl: 'public-read',
-    key: (req, file, cb) => {
-        const name = req.params.id;
-        const ext = file.originalname.split('.').pop();
-        cb(null, `${name}.${ext}`);
+    filename: (req, file, cb) => {
+        const nombre = req.params.id;
+        const extention = file.originalname.split('.').pop();
+        cb(null, `${nombre}.${extention}`);
     }
 });
 
@@ -45,7 +21,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, flag);
 };
 
-const upload = multer({ storage: s3Storage, fileFilter: fileFilter });
+const upload = multer({ storage: multerStorage, fileFilter: fileFilter });
 
 router.post('/upload/:id', upload.single('file'), (req, res) => {
     res.status(201).send({ image: req.file.filename });

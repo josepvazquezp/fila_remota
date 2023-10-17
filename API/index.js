@@ -21,7 +21,7 @@ const port = process.env.PORT || 3000;
 const swaggerDocs = swaggerJsDoc(swaggerConf);
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', "http://localhost:4200"); // Reemplaza "http://localhost:4200" con la URL de tu aplicación Angular
+    res.setHeader('Access-Control-Allow-Origin', 'https://fila-remota.onrender.com'); // Reemplaza "http://localhost:4200" con la URL de tu aplicación Angular
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS'); // Configura los métodos HTTP permitidos
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Configura los encabezados permitidos
     next();
